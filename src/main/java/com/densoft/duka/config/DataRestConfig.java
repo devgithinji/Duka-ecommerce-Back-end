@@ -1,9 +1,12 @@
 package com.densoft.duka.config;
 
+import com.densoft.duka.entity.Country;
 import com.densoft.duka.entity.Product;
 import com.densoft.duka.entity.ProductCategory;
+import com.densoft.duka.entity.State;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.core.mapping.ExposureConfigurer;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -28,18 +31,20 @@ public class DataRestConfig implements RepositoryRestConfigurer {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
         HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
 
-        config.getExposureConfiguration()
-                .forDomainType(Product.class)
-                .withItemExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
-
-        config.getExposureConfiguration()
-                .forDomainType(ProductCategory.class)
-                .withItemExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
-                .withCollectionExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
+        disableHttpMethods(Product.class, config, theUnsupportedActions);
+        disableHttpMethods(ProductCategory.class, config, theUnsupportedActions);
+        disableHttpMethods(Country.class, config, theUnsupportedActions);
+        disableHttpMethods(State.class, config, theUnsupportedActions);
 
         //call an internal helper method
         exposeIds(config);
+    }
+
+    private ExposureConfigurer disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
+        return config.getExposureConfiguration()
+                .forDomainType(theClass)
+                .withItemExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions))
+                .withCollectionExposure((metadata, httpMethods) -> httpMethods.disable(theUnsupportedActions));
     }
 
     private void exposeIds(RepositoryRestConfiguration config) {
