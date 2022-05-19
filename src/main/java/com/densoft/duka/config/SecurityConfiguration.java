@@ -17,5 +17,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //add CORS filter
         http.cors();
+
+        //disable CSRF since we are not using cookies for session tracking
+        http.csrf().disable();
     }
 }
