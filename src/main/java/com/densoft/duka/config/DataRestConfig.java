@@ -1,9 +1,6 @@
 package com.densoft.duka.config;
 
-import com.densoft.duka.entity.Country;
-import com.densoft.duka.entity.Product;
-import com.densoft.duka.entity.ProductCategory;
-import com.densoft.duka.entity.State;
+import com.densoft.duka.entity.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
@@ -38,6 +35,7 @@ public class DataRestConfig implements RepositoryRestConfigurer {
         disableHttpMethods(ProductCategory.class, config, theUnsupportedActions);
         disableHttpMethods(Country.class, config, theUnsupportedActions);
         disableHttpMethods(State.class, config, theUnsupportedActions);
+        disableHttpMethods(Order.class, config, theUnsupportedActions);
 
         //call an internal helper method
         exposeIds(config);
