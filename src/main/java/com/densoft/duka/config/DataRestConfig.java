@@ -4,6 +4,7 @@ import com.densoft.duka.entity.Country;
 import com.densoft.duka.entity.Product;
 import com.densoft.duka.entity.ProductCategory;
 import com.densoft.duka.entity.State;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfigurer;
@@ -20,6 +21,8 @@ import java.util.Set;
 @Configuration
 public class DataRestConfig implements RepositoryRestConfigurer {
 
+    @Value("${allowed.origins}")
+    private String[] allowedOrigins;
     private EntityManager entityManager;
 
     public DataRestConfig(EntityManager entityManager) {
@@ -29,7 +32,7 @@ public class DataRestConfig implements RepositoryRestConfigurer {
 
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-        HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE};
+        HttpMethod[] theUnsupportedActions = {HttpMethod.PUT, HttpMethod.POST, HttpMethod.DELETE, HttpMethod.PATCH};
 
         disableHttpMethods(Product.class, config, theUnsupportedActions);
         disableHttpMethods(ProductCategory.class, config, theUnsupportedActions);
@@ -38,6 +41,8 @@ public class DataRestConfig implements RepositoryRestConfigurer {
 
         //call an internal helper method
         exposeIds(config);
+
+        cors.addMapping(config.getBasePath() + "/**").allowedOrigins(allowedOrigins);
     }
 
     private ExposureConfigurer disableHttpMethods(Class theClass, RepositoryRestConfiguration config, HttpMethod[] theUnsupportedActions) {
